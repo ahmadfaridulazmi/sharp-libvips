@@ -155,6 +155,47 @@ if [ "${PLATFORM%-*}" == "linuxmusl" ] || [ "$DARWIN" = true ]; then
   make install-strip
 fi
 
+mkdir ${DEPS}/libtool
+curl -Ls http://ftpmirror.gnu.org/libtool/libtool-${VERSION_LIBTOOL}.tar.gz | tar xzC ${DEPS}/libtool --strip-components=1
+cd ${DEPS}/libtool
+./configure --host=${CHOST} --prefix=${TARGET} --enable-shared --disable-static --disable-dependency-tracking
+make install-strip
+
+mkdir ${DEPS}/imagemagick
+cd ${DEPS}/imagemagick
+curl -O https://imagemagick.org/download/ImageMagick.tar.gz
+tar xzf ImageMagick.tar.gz
+rm ImageMagick.tar.gz
+cd */.
+./configure \
+  --host=${CHOST} \
+  --prefix=${TARGET} \
+  --enable-shared \
+  --disable-static \
+  --with-modules \
+  --without-bzlib \
+  --without-dps \
+  --without-freetype \
+  --without-jbig \
+  --without-jpeg \
+  --without-jp2 \
+  --without-lcms \
+  --without-lzma \
+  --without-png \
+  --without-tiff \
+  --without-wmf \
+  --without-xml \
+  --without-zlib \
+  --without-perl \
+  --without-x \
+  --with-magick-plus-plus \
+  --enable-delegate-build \
+  --disable-dependency-tracking \
+  --disable-docs \
+  --disable-openmp \
+  --disable-installed
+make install-strip
+
 mkdir ${DEPS}/zlib
 $CURL https://zlib.net/zlib-${VERSION_ZLIB}.tar.xz | tar xJC ${DEPS}/zlib --strip-components=1
 cd ${DEPS}/zlib
